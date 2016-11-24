@@ -15523,3 +15523,40 @@ public class Form1 {
 
     }
 }
+
+        [Fact]
+        public void StructIsPassedByrefIntoRefExtensionMethod()
+        {
+            var source =
+@"
+using System;
+
+public struct S
+{
+    public int I;
+}
+
+class Program
+{
+    public static void Main(string[] args)
+    {
+        S s = new S();
+        s.E();
+        Console.WriteLine(s.I);
+    }
+}
+
+public static class Ext
+{
+    public static void E(this ref S s)
+    {
+        s.I++;
+    }
+}
+";
+            CompileAndVerify(source, additionalRefs: new[] { SystemRef, SystemCoreRef },
+                expectedOutput: "1");
+        }
+
+    }
+}
