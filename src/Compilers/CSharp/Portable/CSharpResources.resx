@@ -5171,4 +5171,7 @@ To remove the warning, you can use /reference instead (set the Embed Interop Typ
   <data name="IDS_FeatureRefExtensionMethods" xml:space="preserve">
     <value>ref or in extension methods</value>
   </data>
+  <data name="ERR_RefExtensionMethodOnNonValueType" xml:space="preserve">
+    <value>A ref extension methods can only be defined on value types.</value>
+  </data>
 </root>

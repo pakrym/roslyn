@@ -247,6 +247,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     diagnostics.Add(ErrorCode.ERR_BadExtensionMeth, location);
                 }
+                else if (!this.ParameterRefKinds.IsDefaultOrEmpty && this.ParameterRefKinds[0] == RefKind.Ref && !parameter0Type.IsValueType)
+                {
+                    diagnostics.Add(ErrorCode.ERR_RefExtensionMethodOnNonValueType, location);
+                }
                 else
                 {
                     // Verify ExtensionAttribute is available.

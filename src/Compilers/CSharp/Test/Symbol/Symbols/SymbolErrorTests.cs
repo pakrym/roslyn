@@ -19512,6 +19512,23 @@ namespace UserSpace
             System.Console.WriteLine(ExistingReference.Value);
         }
     }
+        }
+
+
+        [Fact]
+        public void ERR_RefExtensionMethodOnNonValueType()
+        {
+            var text = @"public static class Extensions
+{
+    public static void Test(this ref System.String s) { } //CS8201
+}
+";
+            var reference = SystemCoreRef;
+            var comp = DiagnosticsUtils.VerifyErrorsAndGetCompilationWithMscorlib(text,
+                new List<MetadataReference> { reference },
+                new ErrorDescription { Code = (int)ErrorCode.ERR_RefExtensionMethodOnNonValueType, Line = 3, Column = 24 });
+        }
+    }
 }";
 
             CompileAndVerify(
