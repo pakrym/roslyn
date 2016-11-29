@@ -141,6 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         IDS_FeatureRefStructs = MessageBase + 12819,
         IDS_FeatureReadOnlyStructs = MessageBase + 12820,
         IDS_FeatureRefExtensionMethods = MessageBase + 12821,
+        IDS_FeatureRefExtensionMethod = MessageBase + 12718,
     }
 
     // Message IDs may refer to strings that need to be localized.
@@ -186,6 +187,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case MessageID.IDS_FeatureIOperation:
                     return "IOperation";
+                case MessageID.IDS_FeatureRefExtensionMethod:
+                    return "RefExtensionMethod";
                 default:
                     return null;
             }

@@ -1880,6 +1880,15 @@ namespace Microsoft.CodeAnalysis.CSharp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to  The parameter modifier &apos;ref&apos; cannot be used with &apos;this&apos; .
+        /// </summary>
+        internal static string ERR_BadRefWithThis {
+            get {
+                return ResourceManager.GetString("ERR_BadRefWithThis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid option &apos;{0}&apos;; Resource visibility must be either &apos;public&apos; or &apos;private&apos;.
         /// </summary>
         internal static string ERR_BadResourceVis {
@@ -10537,6 +10546,16 @@ namespace Microsoft.CodeAnalysis.CSharp {
         internal static string IDS_FeatureRefExtensionMethods {
             get {
                 return ResourceManager.GetString("IDS_FeatureRefExtensionMethods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to byref locals and returns.
+        ///   Looks up a localized string similar to by-ref extension method.
+        /// </summary>
+        internal static string IDS_FeatureRefExtensionMethod {
+            get {
+                return ResourceManager.GetString("IDS_FeatureRefExtensionMethod", resourceCulture);
             }
         }
         
