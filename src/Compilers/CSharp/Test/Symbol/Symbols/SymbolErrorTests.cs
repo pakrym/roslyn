@@ -19451,21 +19451,73 @@ internal abstract event System.EventHandler E;";
                 // internal abstract event System.EventHandler E;
                 Diagnostic(ErrorCode.ERR_AbstractInConcreteClass, "E").WithArguments("E", "Script").WithLocation(3, 45));
         }
-        
-        [Fact]
-        public void ERR_RefExtensionMethodOnNonValueType()
+
+        [Fact, WorkItem(16484, "https://github.com/dotnet/roslyn/issues/16484")]
+        public void MultipleForwardsOfATypeToDifferentAssembliesWithoutUsingItShouldNotReportAnError()
         {
-            var source = @"public static class Extensions
+            var forwardingIL = @"
+.assembly extern mscorlib
 {
-    public static void Test1(this ref System.String s) { } //CS8201
-    public static void Test2<T>(this ref T s) { } //CS8201
-    public static void Test3<T>(this ref T s) where T: struct { }
+  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )
+  .ver 4:0:0:0
 }
-";
-            CreateExperimentalCompilationWithMscorlib45(source, MessageID.IDS_FeatureRefExtensionMethod)
-                .VerifyDiagnostics(
-                    Diagnostic(ErrorCode.ERR_RefExtensionMethodOnNonValueType, "Test1").WithLocation(3, 24),
-                    Diagnostic(ErrorCode.ERR_RefExtensionMethodOnNonValueType, "Test2").WithLocation(4, 24));
+
+.assembly Forwarding
+{
+}
+
+.module Forwarding.dll
+
+.assembly extern Destination1
+{
+}
+.assembly extern Destination2
+{
+}
+
+.class extern forwarder Destination.TestClass
+{
+	.assembly extern Destination1
+}
+.class extern forwarder Destination.TestClass
+{
+	.assembly extern Destination2
+}
+
+.class public auto ansi beforefieldinit TestSpace.ExistingReference
+       extends [mscorlib]System.Object
+{
+  .field public static literal string Value = ""TEST VALUE""
+  .method public hidebysig specialname rtspecialname
+          instance void  .ctor() cil managed
+        {
+            // Code size       8 (0x8)
+            .maxstack  8
+            IL_0000:  ldarg.0
+            IL_0001:  call instance void[mscorlib] System.Object::.ctor()
+            IL_0006:  nop
+            IL_0007:  ret
+        }
+}";
+            var ilReference = CompileIL(forwardingIL, prependDefaultHeader: false);
+
+            var code = @"
+using TestSpace;
+namespace UserSpace
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            System.Console.WriteLine(ExistingReference.Value);
+        }
+    }
+}";
+
+            CompileAndVerify(
+                source: code,
+                additionalRefs: new MetadataReference[] { ilReference },
+                expectedOutput: "TEST VALUE");
         }
 
         [Fact, WorkItem(16484, "https://github.com/dotnet/roslyn/issues/16484")]
@@ -19967,6 +20019,21 @@ namespace A
                 // (11,13): error CS8406: Module 'C.dll' in assembly 'C, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' is forwarding the type 'C.ClassC' to multiple assemblies: 'D, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' and 'E, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'.
                 //             ClassB.MethodB(obj);
                 Diagnostic(ErrorCode.ERR_TypeForwardedToMultipleAssemblies, "ClassB.MethodB").WithArguments("C.dll", "C, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", "C.ClassC", "D, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", "E, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null").WithLocation(11, 13));
+        }
+        
+        public void ERR_RefExtensionMethodOnNonValueType()
+        {
+            var source = @"public static class Extensions
+{
+    public static void Test1(this ref System.String s) { } //CS8201
+    public static void Test2<T>(this ref T s) { } //CS8201
+    public static void Test3<T>(this ref T s) where T: struct { }
+}
+";
+            CreateExperimentalCompilationWithMscorlib45(source, MessageID.IDS_FeatureRefExtensionMethod)
+                .VerifyDiagnostics(
+                    Diagnostic(ErrorCode.ERR_RefExtensionMethodOnNonValueType, "Test1").WithLocation(3, 24),
+                    Diagnostic(ErrorCode.ERR_RefExtensionMethodOnNonValueType, "Test2").WithLocation(4, 24));
         }
     }
 }
