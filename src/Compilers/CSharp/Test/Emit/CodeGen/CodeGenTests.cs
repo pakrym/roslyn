@@ -15521,9 +15521,6 @@ public class Form1 {
 }");
         }
 
-    }
-}
-
         [Fact]
         public void LocalStructIsPassedByrefIntoRefExtensionMethod()
         {

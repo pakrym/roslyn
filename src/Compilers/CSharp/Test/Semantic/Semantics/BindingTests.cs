@@ -3541,10 +3541,6 @@ public class Class1
                 //         System.Func<object> delegateConversion2 = "string literal".ExtensionMethod2<>;
                 Diagnostic(ErrorCode.ERR_NoSuchMemberOrExtension, "ExtensionMethod2<>").WithArguments("string", "ExtensionMethod2").WithLocation(34, 68));
         }
-    }
-}
-
-
 
         [Fact]
         public void ByrefExtensionMethodOnNonVariables()

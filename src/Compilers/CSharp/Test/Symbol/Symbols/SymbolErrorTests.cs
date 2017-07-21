@@ -19451,70 +19451,7 @@ internal abstract event System.EventHandler E;";
                 // internal abstract event System.EventHandler E;
                 Diagnostic(ErrorCode.ERR_AbstractInConcreteClass, "E").WithArguments("E", "Script").WithLocation(3, 45));
         }
-
-        [Fact, WorkItem(16484, "https://github.com/dotnet/roslyn/issues/16484")]
-        public void MultipleForwardsOfATypeToDifferentAssembliesWithoutUsingItShouldNotReportAnError()
-        {
-            var forwardingIL = @"
-.assembly extern mscorlib
-{
-  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )
-  .ver 4:0:0:0
-}
-
-.assembly Forwarding
-{
-}
-
-.module Forwarding.dll
-
-.assembly extern Destination1
-{
-}
-.assembly extern Destination2
-{
-}
-
-.class extern forwarder Destination.TestClass
-{
-	.assembly extern Destination1
-}
-.class extern forwarder Destination.TestClass
-{
-	.assembly extern Destination2
-}
-
-.class public auto ansi beforefieldinit TestSpace.ExistingReference
-       extends [mscorlib]System.Object
-{
-  .field public static literal string Value = ""TEST VALUE""
-  .method public hidebysig specialname rtspecialname
-          instance void  .ctor() cil managed
-        {
-            // Code size       8 (0x8)
-            .maxstack  8
-            IL_0000:  ldarg.0
-            IL_0001:  call instance void[mscorlib] System.Object::.ctor()
-            IL_0006:  nop
-            IL_0007:  ret
-        }
-}";
-            var ilReference = CompileIL(forwardingIL, prependDefaultHeader: false);
-
-            var code = @"
-using TestSpace;
-namespace UserSpace
-{
-    public class Program
-    {
-        public static void Main()
-        {
-            System.Console.WriteLine(ExistingReference.Value);
-        }
-    }
-        }
-
-
+        
         [Fact]
         public void ERR_RefExtensionMethodOnNonValueType()
         {
@@ -19529,14 +19466,6 @@ namespace UserSpace
                 .VerifyDiagnostics(
                     Diagnostic(ErrorCode.ERR_RefExtensionMethodOnNonValueType, "Test1").WithLocation(3, 24),
                     Diagnostic(ErrorCode.ERR_RefExtensionMethodOnNonValueType, "Test2").WithLocation(4, 24));
-        }
-    }
-}";
-
-            CompileAndVerify(
-                source: code,
-                additionalRefs: new MetadataReference[] { ilReference },
-                expectedOutput: "TEST VALUE");
         }
 
         [Fact, WorkItem(16484, "https://github.com/dotnet/roslyn/issues/16484")]

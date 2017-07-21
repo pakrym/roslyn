@@ -946,7 +946,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 !method.ParameterRefKinds.IsDefaultOrEmpty &&
                 method.ParameterRefKinds[0] == RefKind.Ref)
             {
-                CheckIsVariable(expression, args[0], BindValueKind.RefOrOut, false, diagnostics);
+                CheckValueKind(expression, args[0], BindValueKind.RefOrOut, false, diagnostics);
             }
 
             // This will be the receiver of the BoundCall node that we create.

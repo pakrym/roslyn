@@ -9499,8 +9499,6 @@ public static class Program
                 //         Method(out x);
                 Diagnostic(ErrorCode.ERR_BadArgExtraRef, "x").WithArguments("1", "out").WithLocation(11, 20));
         }
-    }
-}
 
         [Fact]
         public void RefExtensionMethodAmbiguity()
